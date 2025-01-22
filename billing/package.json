@@ -10,16 +10,45 @@
     "Productivity"
   ],
   "license": "MIT",
+  "preferences": [
+    {
+      "name": "TOKEN",
+      "title": "Token to access Billing API",
+      "type": "password",
+      "required": true,
+      "description": "Permissions Required: Billing, Transaction & Subscriptions"
+    }
+  ],
   "commands": [
     {
       "name": "index",
       "title": "Manage Billing, Transactions & Subscriptions",
       "description": "Manage Billing, Transactions & Subscriptions",
-      "mode": "view"
+      "mode": "view",
+      "arguments": [
+        {
+          "name": "view",
+          "type": "dropdown",
+          "placeholder": "Select a view",
+          "required": true,
+          "data": [
+            {
+              "title": "Billing",
+              "value": "billing"
+            }
+          ]
+        }
+      ]
     }
   ],
   "dependencies": {
-    "@raycast/api": "^1.89.0"
+    "@equt/pattern": "^2.0.0",
+    "@raycast/api": "^1.89.0",
+    "@raycast/utils": "^1.18.1",
+    "cross-fetch": "^4.1.0",
+    "date-fns": "^4.1.0",
+    "decimal.js": "^10.4.3",
+    "swr": "^2.3.0"
   },
   "devDependencies": {
     "@raycast/eslint-config": "^1.0.6",
