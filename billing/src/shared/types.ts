@@ -1,15 +1,14 @@
-export type NonEmptyArray<T> = [T, ...T[]]
+export type NonEmptyArray<T> = [T, ...T[]];
 
 export type API<Data> = Readonly<
-  | { succeeded: true, data: Data, cursor?: string }
-  | { succeeded: false, message: string }
->
+  { succeeded: true; data: Data; cursor?: string } | { succeeded: false; message: string }
+>;
 
-type Primitive = string | number | boolean | undefined | null
+type Primitive = string | number | boolean | undefined | null;
 
-export type SearchParams = Record<string, Primitive | Array<Primitive>>
+export type SearchParams = Record<string, Primitive | Array<Primitive>>;
 
-export type Nullable<T> = T | null | undefined
+export type Nullable<T> = T | null | undefined;
 
 export enum Attitude {
   Negative,
@@ -30,10 +29,10 @@ export enum TransactionType {
 }
 
 export enum Currency {
-  USD = 'USD',
-  CNY = 'CNY',
-  EUR = 'EUR',
-  JPY = 'JPY',
+  USD = "USD",
+  CNY = "CNY",
+  EUR = "EUR",
+  JPY = "JPY",
 }
 
 export enum SubscriptionPeriod {
@@ -42,26 +41,26 @@ export enum SubscriptionPeriod {
 }
 
 export type Billing = Readonly<{
-  id: string
-  time: string
-  name: string | null
-  note: string | null
-  valid: boolean
-}>
+  id: string;
+  time: string;
+  name: string | null;
+  note: string | null;
+  valid: boolean;
+}>;
 
 export type Account = Readonly<{
-  id: string
-  name: string
-  type: AccountType
-  currency: Currency
-}>
+  id: string;
+  name: string;
+  type: AccountType;
+  currency: Currency;
+}>;
 
 export type Transaction = Readonly<{
-  id: string
-  billing_id: string
-  type: TransactionType
-  amount: number
-  name: string | null
-  time: string
-  account: Account
-}>
+  id: string;
+  billing_id: string;
+  type: TransactionType;
+  amount: number;
+  name: string | null;
+  time: string;
+  account: Account;
+}>;

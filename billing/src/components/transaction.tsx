@@ -114,15 +114,17 @@ export function TransactionList(props?: TransactionListProps) {
                 {...props}
                 accessories={[
                   ...(props.accessories ?? []),
-                  ...hasUnitPrice(transaction)
-                    ? [{
-                        icon: Icon.Tag,
-                        text: new Decimal(transaction.amount)
-                          .div(parseQuantity(transaction.name!).quantity)
-                          .toNumber()
-                          .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
-                      }]
-                    : [],
+                  ...(hasUnitPrice(transaction)
+                    ? [
+                        {
+                          icon: Icon.Tag,
+                          text: new Decimal(transaction.amount)
+                            .div(parseQuantity(transaction.name!).quantity)
+                            .toNumber()
+                            .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                        },
+                      ]
+                    : []),
                   {
                     icon: {
                       source: {
