@@ -1,35 +1,31 @@
-import { Action, ActionPanel, Icon, Keyboard, LaunchProps, useNavigation } from "@raycast/api";
-import { BillingForm, BillingList } from "./components/billing";
-import { DeepLink } from "./components/actions";
+import { Action, ActionPanel, Icon, Keyboard, LaunchProps } from "@raycast/api";
+import { Billing, Transaction, Criticism } from "@components";
 import { useMemo, useState } from "react";
-import { TransactionForm, TransactionList } from "./components/transaction";
-import { isSome, toast } from "./shared/utils";
+import { isSome } from "./shared/utils";
 import { formatDate } from "date-fns";
-import { api, update } from "./hooks/useAPI";
-import { Billing } from "./shared/types";
+import { CreateCriticism, DeleteCriticism, EditBilling, EditCriticism } from "./actions";
+import CreateBilling from "./actions/create-billing";
+import DeleteBilling from "./actions/delete-billing";
 
-type BillingEntrypointProps = {
-  handler: string;
-};
-
-function BillingEntrypoint(props: BillingEntrypointProps) {
-  const { handler } = props;
-
+function BillingEntrypoint() {
   const [searchText, setSearchText] = useState("");
 
-  const { pop } = useNavigation();
-
   return (
-    <BillingList
+    <Billing.List
       params={{
         name: useMemo(() => (searchText.length > 0 ? searchText : undefined), [searchText]),
       }}
-      listProps={{
+      listProps={(mutate) => ({
         navigationTitle: "Manage Billings",
         searchBarPlaceholder: `Search Billings`,
         searchText,
         onSearchTextChange: setSearchText,
-      }}
+        actions: (
+          <ActionPanel>
+            <CreateBilling mutate={mutate} />
+          </ActionPanel>
+        ),
+      })}
       itemProps={(billing, mutate) => ({
         actions: (
           <ActionPanel>
@@ -37,11 +33,11 @@ function BillingEntrypoint(props: BillingEntrypointProps) {
               title="View Transactions"
               icon={Icon.Eye}
               target={
-                <TransactionList
+                <Transaction.List
                   params={{
                     billing_id: billing.id,
                   }}
-                  listProps={{
+                  listProps={() => ({
                     searchBarPlaceholder: `Search Transactions for ${billing.name ?? "New Billing"}`,
                     navigationTitle: `Transactions for ${billing.name ?? "New Billing"}`,
                     actions: (
@@ -50,12 +46,12 @@ function BillingEntrypoint(props: BillingEntrypointProps) {
                           title="Create"
                           icon={Icon.Plus}
                           shortcut={Keyboard.Shortcut.Common.New}
-                          target={<TransactionForm />}
+                          target={<Transaction.Form />}
                         />
                       </ActionPanel>
                     ),
-                  }}
-                  itemProps={(transaction) => ({
+                  })}
+                  itemProps={(transaction, mutateTransactionList) => ({
                     accessories: [
                       transaction.time !== billing.time
                         ? {
@@ -66,10 +62,59 @@ function BillingEntrypoint(props: BillingEntrypointProps) {
                     actions: (
                       <ActionPanel>
                         <Action.Push
+                          title="View Criticisms"
+                          target={
+                            <Criticism.List
+                              listProps={(mutateCriticismList) => ({
+                                searchBarPlaceholder: `Search Criticisms for ${transaction.name ?? billing.name ?? "New Transaction"}`,
+                                navigationTitle: `Criticisms for ${transaction.name ?? billing.name ?? "New Transaction"}`,
+                                actions: (
+                                  <ActionPanel>
+                                    <CreateCriticism
+                                      mutateCriticismList={mutateCriticismList}
+                                      mutateTransactionList={mutateTransactionList}
+                                      transaction={transaction}
+                                    />
+                                  </ActionPanel>
+                                ),
+                              })}
+                              itemProps={(criticism, mutateCriticismList) => ({
+                                actions: (
+                                  <ActionPanel>
+                                    <Action.Push
+                                      title="Edit Criticism"
+                                      icon={Icon.Pencil}
+                                      shortcut={Keyboard.Shortcut.Common.Edit}
+                                      target={<Criticism.Form initial={{ ...criticism }} />}
+                                    />
+                                    <CreateCriticism
+                                      mutateCriticismList={mutateCriticismList}
+                                      mutateTransactionList={mutateTransactionList}
+                                      transaction={transaction}
+                                    />
+                                    <EditCriticism
+                                      mutateCriticismList={mutateCriticismList}
+                                      mutateTransactionList={mutateTransactionList}
+                                      criticism={criticism}
+                                      transaction={transaction}
+                                    />
+                                    <DeleteCriticism
+                                      mutateCriticismList={mutateCriticismList}
+                                      mutateTransactionList={mutateTransactionList}
+                                      criticism={criticism}
+                                    />
+                                  </ActionPanel>
+                                ),
+                              })}
+                              transaction={transaction}
+                            />
+                          }
+                        />
+                        <Action.Push
                           title="Create"
                           icon={Icon.Plus}
                           shortcut={Keyboard.Shortcut.Common.New}
-                          target={<TransactionForm />}
+                          target={<Transaction.Form />}
                         />
                       </ActionPanel>
                     ),
@@ -78,158 +123,9 @@ function BillingEntrypoint(props: BillingEntrypointProps) {
                 />
               }
             />
-            <Action.Push
-              title="Edit"
-              icon={Icon.Pencil}
-              shortcut={Keyboard.Shortcut.Common.Edit}
-              target={
-                <BillingForm
-                  initial={{ ...billing }}
-                  onSubmit={(form) => {
-                    pop();
-
-                    toast(
-                      "updat",
-                      billing.name ?? "New Billing",
-                      mutate(
-                        api<Billing>(`/billing/${billing.id}`, {
-                          method: "PUT",
-                          headers: {
-                            "Content-Type": "application/json",
-                          },
-                          body: JSON.stringify({
-                            ...form,
-                          }),
-                        }),
-                        {
-                          optimisticData(current) {
-                            return update(
-                              current,
-                              (r) => r.id === billing.id,
-                              (current) => ({
-                                ...current,
-                                ...form,
-                                time: form.time!.toISOString(),
-                              }),
-                            );
-                          },
-                          populateCache(response, current) {
-                            return update(
-                              current,
-                              (r) => r.id === billing.id,
-                              () => ({
-                                ...response,
-                              }),
-                            );
-                          },
-                          revalidate: false,
-                          rollbackOnError: true,
-                        },
-                      ),
-                    );
-                  }}
-                />
-              }
-            />
-            <Action.Push
-              title="Create"
-              icon={Icon.Plus}
-              shortcut={Keyboard.Shortcut.Common.New}
-              target={
-                <BillingForm
-                  initial={{ time: new Date().toISOString() }}
-                  onSubmit={(form) => {
-                    pop();
-
-                    toast(
-                      "creat",
-                      form.name ?? "New Billing",
-                      mutate(
-                        api<Billing>("/billing", {
-                          method: "POST",
-                          headers: {
-                            "Content-Type": "application/json",
-                          },
-                          body: JSON.stringify({
-                            ...form,
-                          }),
-                        }),
-                        {
-                          optimisticData(current) {
-                            return update(
-                              current,
-                              (r) => r.time <= form.time!.toISOString(),
-                              (billing) => [
-                                { id: "NEW", valid: false, ...form, time: form.time!.toISOString() },
-                                billing,
-                              ],
-                            );
-                          },
-                          populateCache(billing, current) {
-                            return update(
-                              current,
-                              (r) => r.time <= form.time!.toISOString(),
-                              (next) => [billing, next],
-                            );
-                          },
-                          revalidate: true, // revalidate as the cursor might have changed
-                          rollbackOnError: true,
-                        },
-                      ),
-                    );
-                  }}
-                />
-              }
-            />
-            <Action
-              title="Delete"
-              icon={Icon.Trash}
-              shortcut={Keyboard.Shortcut.Common.Remove}
-              onAction={() =>
-                toast(
-                  "delet",
-                  billing.name ?? "New Billing",
-                  mutate(
-                    api<Billing>(`/billing/${billing.id}`, {
-                      method: "DELETE",
-                    }),
-                    {
-                      optimisticData(current) {
-                        return (
-                          current?.map((page) => {
-                            if (page.succeeded) {
-                              return {
-                                ...page,
-                                data: page.data.filter((r) => r.id !== billing.id),
-                              };
-                            } else {
-                              return { ...page };
-                            }
-                          }) ?? []
-                        );
-                      },
-                      populateCache({ id }, current) {
-                        return (
-                          current?.map((page) => {
-                            if (page.succeeded) {
-                              return {
-                                ...page,
-                                data: page.data.filter((r) => r.id !== id),
-                              };
-                            } else {
-                              return { ...page };
-                            }
-                          }) ?? []
-                        );
-                      },
-                      revalidate: true, // revalidate as the cursor might have changed
-                      rollbackOnError: true,
-                    },
-                  ),
-                )
-              }
-            />
-            <DeepLink name="Search Billing" view={handler} />
+            <EditBilling billing={billing} mutate={mutate} />
+            <CreateBilling mutate={mutate} />
+            <DeleteBilling billing={billing} mutate={mutate} />
           </ActionPanel>
         ),
       })}
@@ -240,6 +136,6 @@ function BillingEntrypoint(props: BillingEntrypointProps) {
 export default function (props: LaunchProps<{ arguments: Arguments.Index }>) {
   switch (props.arguments.view) {
     case "billing":
-      return <BillingEntrypoint handler="billing" />;
+      return <BillingEntrypoint />;
   }
 }

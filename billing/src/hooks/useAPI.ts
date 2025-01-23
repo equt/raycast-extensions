@@ -1,9 +1,8 @@
 import { getPreferenceValues, List } from "@raycast/api";
 import { fetch } from "cross-fetch";
 import useSWRInfinite, { SWRInfiniteMutatorOptions } from "swr/infinite";
-import { API, SearchParams } from "../shared/types";
 import { useEffect, useMemo } from "react";
-import { isSome } from "../shared/utils";
+import { isSome } from "@shared/utils";
 import useSWR, { MutatorCallback } from "swr";
 import { useCachedState } from "@raycast/utils";
 
@@ -22,6 +21,14 @@ type Options = Readonly<
   Partial<{
     params: SearchParams | null;
   }>
+>;
+
+type Primitive = string | number | boolean | undefined | null;
+
+export type SearchParams = Record<string, Primitive | Array<Primitive>>;
+
+export type API<Data> = Readonly<
+  { succeeded: true; data: Data; cursor?: string } | { succeeded: false; message: string }
 >;
 
 export type FixedSWRInfiniteKeyedMutator<Data> = <MutationData = Data>(
@@ -56,10 +63,11 @@ export function update<T>(
   data: Array<API<Array<T>>> | undefined,
   where: (item: Readonly<T>) => boolean,
   updater: (item: Readonly<T>) => T | Array<T>,
+  defaultValue?: T
 ): Array<API<Array<T>>> {
   let inserted = false;
 
-  return (data ?? []).map((page) => {
+  const updated = (data ?? []).map((page) => {
     if (page.succeeded) {
       return {
         ...page,
@@ -77,6 +85,12 @@ export function update<T>(
       return { ...page };
     }
   });
+
+  if (!inserted && isSome(defaultValue)) {
+    updated.push({ succeeded: true, data: [defaultValue] })
+  }
+
+  return updated
 }
 
 export async function api<T>(endpoint: string, init?: Parameters<typeof fetch>[1]): Promise<T> {
@@ -86,7 +100,7 @@ export async function api<T>(endpoint: string, init?: Parameters<typeof fetch>[1
       Authorization: `Bearer ${getPreferenceValues<PreferenceValues>().TOKEN}`,
       ...init?.headers,
     },
-  }).then((r) => r.json());
+  }).then(r => r.json());
 
   if (!resp.succeeded) {
     throw new Error(resp.message);

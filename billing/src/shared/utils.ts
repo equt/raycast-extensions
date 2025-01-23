@@ -1,5 +1,5 @@
 import { formatDate, isToday, isYesterday } from "date-fns";
-import { NonEmptyArray, Nullable } from "./types";
+import { NonEmptyArray, Nullable } from "@shared/types";
 import { showToast, Toast } from "@raycast/api";
 import { pattern } from "@equt/pattern";
 
