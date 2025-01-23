@@ -4,7 +4,7 @@ import { useAPI } from "@hooks";
 import { isSome } from "@shared/utils";
 import { FormValidation, useForm } from "@raycast/utils";
 
-type TransactionFormProps = Readonly<
+type Props = Readonly<
   Partial<{
     billing: Partial<Billing.Type>;
     initial: Partial<Transaction.Type>;
@@ -17,7 +17,7 @@ type Form = Readonly<{
   type: Transaction.TransactionType;
 }>;
 
-export default function TransactionForm(props?: TransactionFormProps) {
+export default function (props?: Props) {
   const { initial, billing, onSubmit = () => void 0 } = props ?? {};
 
   const { itemProps, handleSubmit } = useForm<Form>({

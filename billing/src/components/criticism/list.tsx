@@ -2,7 +2,7 @@ import {  Color, Icon, List } from "@raycast/api";
 import { Transaction, Criticism } from '@components'
 import {  API, SearchParams, FixedSWRInfiniteKeyedMutator, usePaginationAPI } from "@hooks";
 
-type CriticismProps = Readonly<{
+type Props = Readonly<{
   transaction: Transaction.Type;
   params?: SearchParams | null;
   listProps?: (
@@ -14,7 +14,7 @@ type CriticismProps = Readonly<{
   ) => Omit<List.Item.Props, "icon" | "title" | "subtitle">;
 }>;
 
-export default function CriticismList(props: CriticismProps) {
+export default function (props: Props) {
   const { transaction, params, listProps, itemProps } = props;
 
   const { data, mutate, pagination, isLoading } = usePaginationAPI<Criticism.Type>(

@@ -3,7 +3,7 @@ import { Billing } from "@components";
 import { isSome } from "@shared/utils";
 import { FormValidation, useForm } from "@raycast/utils";
 
-type BillingFormProps = Readonly<
+type Props = Readonly<
   Partial<{
     initial: Partial<Billing.Type>;
     onSubmit: (form: Form) => void;
@@ -16,7 +16,7 @@ type Form = Readonly<{
   time: Date | null;
 }>;
 
-export default function BillingForm(props?: BillingFormProps) {
+export default function (props?: Props) {
   const { initial, onSubmit = () => void 0 } = props ?? {};
 
   const { itemProps, handleSubmit } = useForm<Form>({

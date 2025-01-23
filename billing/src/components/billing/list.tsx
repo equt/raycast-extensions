@@ -4,7 +4,7 @@ import { API, SearchParams , FixedSWRInfiniteKeyedMutator, usePaginationAPI } fr
 import { formatDate } from "date-fns";
 import { date, group, renderDate } from "@shared/utils";
 
-type BillingListProps = Readonly<
+type Props = Readonly<
   Partial<{
     size: number;
     listProps: (mutate: FixedSWRInfiniteKeyedMutator<Array<API<Array<Billing.Type>>>>) => Omit<List.Props, "throttle" | "pagination" | "isLoading">;
@@ -17,7 +17,7 @@ type BillingListProps = Readonly<
   }>
 >;
 
-export default function BillingList(props?: BillingListProps) {
+export default function (props?: Props) {
   const { params, size, listProps, itemProps, defaultTitle = "New Billing" } = props ?? {};
 
   const { data, mutate, pagination, isLoading } = usePaginationAPI<Billing.Type>("/billing", {

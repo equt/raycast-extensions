@@ -8,7 +8,7 @@ type Props = Readonly<{
   mutate: FixedSWRInfiniteKeyedMutator<Array<API<Array<Billing.Type>>>>;
 }>;
 
-export default function EditBilling(props: Props) {
+export default function (props: Props) {
   const { billing, mutate } = props;
 
   const { pop } = useNavigation();

@@ -3,7 +3,7 @@ import { Criticism } from "@components";
 import { FormValidation, useForm } from "@raycast/utils";
 import { isSome } from "@shared/utils";
 
-type CriticismFormProps = Readonly<
+type Props = Readonly<
   Partial<{
     initial: Partial<Criticism.Type>;
     onSubmit: (form: Form) => void;
@@ -15,7 +15,7 @@ type Form = Readonly<{
   attitude: Criticism.Attitude;
 }>;
 
-export default function CriticismForm(props?: CriticismFormProps) {
+export default function (props?: Props) {
   const { initial, onSubmit } = props ?? {};
 
   const { itemProps, handleSubmit } = useForm<{

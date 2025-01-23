@@ -3,13 +3,13 @@ import { Criticism, Transaction } from "@components";
 import { toast } from "@shared/utils";
 import { API, FixedSWRInfiniteKeyedMutator, api, update } from "@hooks";
 
-type CreateCriticismProps = Readonly<{
+type Props = Readonly<{
   transaction: Transaction.Type;
   mutateCriticismList: FixedSWRInfiniteKeyedMutator<Array<API<Array<Criticism.Type>>>>;
   mutateTransactionList: FixedSWRInfiniteKeyedMutator<Array<API<Array<Transaction.Type>>>>;
 }>;
 
-export default function CreateCriticism(props: CreateCriticismProps) {
+export default function (props: Props) {
   const { mutateCriticismList, mutateTransactionList, transaction } = props;
 
   const { pop } = useNavigation();

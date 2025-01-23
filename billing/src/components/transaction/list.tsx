@@ -4,7 +4,7 @@ import { API, SearchParams, FixedSWRInfiniteKeyedMutator, usePaginationAPI } fro
 import { group, date, renderDate, hasUnitPrice, parseQuantity } from "@shared/utils";
 import Decimal from "decimal.js";
 
-type TransactionListProps = Readonly<
+type Props = Readonly<
   Partial<{
     by: "date" | "account";
     size: number;
@@ -28,7 +28,7 @@ function renderAccount({ account }: Transaction.Type) {
   return `${account.name} (${Transaction.AccountType[account.type]})`;
 }
 
-export default function TransactionList(props?: TransactionListProps) {
+export default function (props?: Props) {
   const { by = "account", defaultTitle = "New Transaction", params, itemProps, size } = props ?? {};
 
   const { data, mutate, pagination, isLoading } = usePaginationAPI<Transaction.Type>("/transaction", {

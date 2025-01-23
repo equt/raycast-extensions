@@ -9,7 +9,7 @@ type Props = Readonly<{
   criticism: Criticism.Type;
 }>;
 
-export default function DeleteCriticism(props: Props) {
+export default function (props: Props) {
   const { mutateCriticismList, mutateTransactionList, criticism } = props;
 
   return (
