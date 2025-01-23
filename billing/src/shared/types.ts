@@ -63,4 +63,8 @@ export type Transaction = Readonly<{
   name: string | null;
   time: string;
   account: Account;
+  criticism: Readonly<{
+    positive: number;
+    negative: number;
+  }>
 }>;

@@ -114,6 +114,18 @@ export function TransactionList(props?: TransactionListProps) {
                 {...props}
                 accessories={[
                   ...(props.accessories ?? []),
+                  ...(transaction.criticism.positive ? [
+                    {
+                      icon: Icon.ThumbsUp,
+                      text: transaction.criticism.positive.toString(),
+                    }
+                  ] : []),
+                  ...(transaction.criticism.negative ? [
+                    {
+                      icon: Icon.ThumbsDown,
+                      text: transaction.criticism.negative.toString(),
+                    }
+                  ] : []),
                   ...(hasUnitPrice(transaction)
                     ? [
                         {
