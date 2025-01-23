@@ -1,16 +1,19 @@
 import { Color, Icon, List } from "@raycast/api";
-import { Billing } from '@components'
-import { API, SearchParams , FixedSWRInfiniteKeyedMutator, usePaginationAPI } from "@hooks";
+import { Billing } from "@components";
+import { API, SearchParams, FixedSWRInfiniteKeyedMutator, usePaginationAPI } from "@hooks";
 import { formatDate } from "date-fns";
 import { date, group, renderDate } from "@shared/utils";
 
 type Props = Readonly<
   Partial<{
     size: number;
-    listProps: (mutate: FixedSWRInfiniteKeyedMutator<Array<API<Array<Billing.Type>>>>) => Omit<List.Props, "throttle" | "pagination" | "isLoading">;
+    listProps: (
+      mutate: FixedSWRInfiniteKeyedMutator<Array<API<Array<Billing.Type>>>>,
+    ) => Omit<List.Props, "throttle" | "pagination" | "isLoading">;
     itemProps: (
       billing: Billing.Type,
       mutate: FixedSWRInfiniteKeyedMutator<Array<API<Array<Billing.Type>>>>,
+      billings: ReadonlyArray<Billing.Type>,
     ) => Omit<List.Item.Props, "icon" | "title" | "subtitle">;
     params: SearchParams | null;
     defaultTitle: string;
@@ -30,7 +33,7 @@ export default function (props?: Props) {
       {Object.values(group(data ?? [], date)).map((billings, i) => (
         <List.Section key={i} title={renderDate(billings[0])}>
           {billings.map((billing) => {
-            const props = itemProps?.(billing, mutate);
+            const props = itemProps?.(billing, mutate, billings);
 
             return (
               <List.Item

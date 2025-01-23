@@ -138,7 +138,7 @@ export function useAPI<T>(endpoint: string, options?: Options) {
 }
 
 export function usePaginationAPI<T>(endpoint: string, options?: PaginationOptions): Return<T> {
-  const { size = 10, params = {} } = options ?? {};
+  const { size = 20, params = {} } = options ?? {};
 
   const { data, isLoading, isValidating, mutate, setSize } = useSWRInfinite<API<Array<T>>>(
     (_, previous) => {
@@ -161,6 +161,7 @@ export function usePaginationAPI<T>(endpoint: string, options?: PaginationOption
       }).then((r) => r.json());
     },
     {
+      revalidateFirstPage: false,
       use: [
         (useSWR) => (key, fetcher, config) => {
           const swr = useSWR(key, fetcher, config);

@@ -1,5 +1,5 @@
 import { Color, Icon, List } from "@raycast/api";
-import { Transaction } from '@components'
+import { Transaction } from "@components";
 import { API, SearchParams, FixedSWRInfiniteKeyedMutator, usePaginationAPI } from "@hooks";
 import { group, date, renderDate, hasUnitPrice, parseQuantity } from "@shared/utils";
 import Decimal from "decimal.js";
@@ -16,6 +16,7 @@ type Props = Readonly<
     itemProps: (
       transaction: Transaction.Type,
       mutate: FixedSWRInfiniteKeyedMutator<Array<API<Array<Transaction.Type>>>>,
+      transactions: ReadonlyArray<Transaction.Type>,
     ) => Omit<List.Item.Props, "icon" | "title" | "subtitle">;
   }>
 >;
@@ -29,7 +30,7 @@ function renderAccount({ account }: Transaction.Type) {
 }
 
 export default function (props?: Props) {
-  const { by = "account", defaultTitle = "New Transaction", params, itemProps, size } = props ?? {};
+  const { by = "account", defaultTitle = "New Transaction", params, itemProps, listProps, size } = props ?? {};
 
   const { data, mutate, pagination, isLoading } = usePaginationAPI<Transaction.Type>("/transaction", {
     params,
@@ -37,11 +38,11 @@ export default function (props?: Props) {
   });
 
   return (
-    <List throttle pagination={pagination} isLoading={isLoading} {...props?.listProps?.(mutate)}>
+    <List throttle pagination={pagination} isLoading={isLoading} {...listProps?.(mutate)}>
       {Object.values(group(data ?? [], { account, date }[by])).map((transactions, i) => (
         <List.Section key={i} title={{ date: renderDate, account: renderAccount }[by](transactions[0])}>
           {transactions.map((transaction) => {
-            const props = itemProps?.(transaction, mutate) ?? {};
+            const props = itemProps?.(transaction, mutate, transactions) ?? {};
 
             return (
               <List.Item
