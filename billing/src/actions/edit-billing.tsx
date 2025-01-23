@@ -34,7 +34,10 @@ export default function EditBilling(props: Props) {
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify({
-                    ...form,
+                    id: billing.id,
+                    name: form.name !== billing.name ? form.name : undefined,
+                    time: form.time!.toISOString() !== billing.time ? form.time : undefined,
+                    note: form.note !== billing.note ? form.note : undefined,
                   }),
                 }),
                 {
