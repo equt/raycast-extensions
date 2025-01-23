@@ -47,7 +47,7 @@ export default function (props?: Props) {
             return (
               <List.Item
                 key={transaction.id}
-                title={defaultTitle}
+                title={transaction.name ?? defaultTitle}
                 {...props}
                 accessories={[
                   ...(props.accessories ?? []),

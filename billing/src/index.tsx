@@ -3,7 +3,7 @@ import { Billing, Transaction, Criticism } from "@components";
 import { useMemo, useState } from "react";
 import { isSome } from "./shared/utils";
 import { formatDate } from "date-fns";
-import { CreateCriticism, CreateTransaction, DeleteCriticism, EditBilling, EditCriticism, CreateBilling, DeleteBilling } from "./actions";
+import { CreateCriticism, CreateTransaction, DeleteCriticism, EditBilling, EditCriticism, CreateBilling, DeleteBilling, DeleteTransaction } from "./actions";
 
 function BillingEntrypoint() {
   const [searchText, setSearchText] = useState("");
@@ -108,6 +108,10 @@ function BillingEntrypoint() {
                               billing={billing}
                               mutate={mutateTransactionList}
                               transactions={transactions}
+                            />
+                            <DeleteTransaction
+                              transaction={transaction}
+                              mutate={mutateTransactionList}
                             />
                           </ActionPanel.Section>
                         </ActionPanel>

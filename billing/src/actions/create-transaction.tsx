@@ -1,5 +1,5 @@
 import { Billing, Transaction } from "@components";
-import { api, API, FixedSWRInfiniteKeyedMutator, update } from "@hooks";
+import { api, API, FixedSWRInfiniteKeyedMutator } from "@hooks";
 import { Action, Icon, Keyboard, useNavigation } from "@raycast/api";
 
 type Props = Readonly<{
@@ -22,70 +22,23 @@ export default function (props: Props) {
         <Transaction.Form
           transactions={transactions}
           billing={billing}
-          onSubmit={(form) => {
+          onSubmit={async ({ account, ...form }) => {
             pop();
 
-            mutate(
-              api<Transaction.Type>("/transaction", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  billing_id: billing.id,
-                  ...form,
-                  time: form.time?.toISOString() !== billing.time ? form.time?.toISOString() : undefined,
-                }),
-              }),
-              {
-                optimisticData(current) {
-                  return update(
-                    current,
-                    (r) =>
-                      r.time <=
-                      (form.time && form.time?.toISOString() !== billing.time ? form.time.toISOString() : billing.time),
-                    (current) => [
-                      {
-                        id: "",
-                        billing_id: billing.id,
-                        ...form,
-                        time: form.time?.toISOString() ?? billing.time,
-                        name: form.name ?? billing.name,
-                        criticism: {
-                          negative: 0,
-                          positive: 0,
-                        },
-                      },
-                      current,
-                    ],
-                    {
-                      id: "",
-                      billing_id: billing.id,
-                      ...form,
-                      time: form.time?.toISOString() ?? billing.time,
-                      name: form.name ?? billing.name,
-                      criticism: {
-                        negative: 0,
-                        positive: 0,
-                      },
-                    },
-                  );
-                },
-                populateCache(response, current) {
-                  return update(
-                    current,
-                    (r) =>
-                      r.time <=
-                        (form.time && form.time?.toISOString() !== billing.time
-                          ? form.time.toISOString()
-                          : billing.time) && r.id <= response.id,
-                    (current) => [response, current],
-                    response
-                  );
-                },
-                revalidate: true,
+            await api<Transaction.Type>("/transaction", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
               },
-            );
+              body: JSON.stringify({
+                billing_id: billing.id,
+                ...form,
+                account_id: account.id,
+                time: form.time?.toISOString() !== billing.time ? form.time?.toISOString() : undefined,
+              }),
+            });
+
+            mutate();
           }}
         />
       }
