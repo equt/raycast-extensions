@@ -128,6 +128,25 @@ export function useAPI<T>(endpoint: string, options?: Options) {
             throw new Error(resp.message);
           }
         }),
+    {
+      use: [
+        (useSWR) => (key, fetcher, config) => {
+          const swr = useSWR(key, fetcher, config);
+
+          const [data, setData] = useCachedState(key as string, swr.data);
+
+          useEffect(() => {
+            if (swr.data !== undefined) {
+              setData(swr.data);
+            }
+          }, [swr.data]);
+
+          return Object.assign({}, swr, {
+            data,
+          });
+        },
+      ],
+    }
   );
 
   return {
