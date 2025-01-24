@@ -6,13 +6,40 @@ import { FormValidation, useForm } from "@raycast/utils";
 import { Nullable } from "@shared/types";
 import { useMemo } from "react";
 import Decimal from "decimal.js";
-import E from 'math-expression-evaluator'
+import { pattern } from "@equt/pattern";
+
+const addP = pattern`${['lhs', /\d+(\.\d+)?/, { parse: parseFloat }]}\s*\+\s*${['rhs', /\d+(\.\d+)?/, { parse: parseFloat }]}`
+const subP = pattern`${['lhs', /\d+(\.\d+)?/, { parse: parseFloat }]}\s*-\s*${['rhs', /\d+(\.\d+)?/, { parse: parseFloat }]}`
+const mulP = pattern`${['lhs', /\d+(\.\d+)?/, { parse: parseFloat }]}\s*\*\s*${['rhs', /\d+(\.\d+)?/, { parse: parseFloat }]}`
+const divP = pattern`${['lhs', /\d+(\.\d+)?/, { parse: parseFloat }]}\s*\/\s*${['rhs', /\d+(\.\d+)?/, { parse: parseFloat }]}`
 
 function tryEvaluate(value: string): Nullable<number> {
   try {
-    return new E().eval(value)
+    const { lhs, rhs } = addP(value)
+    return new Decimal(lhs).add(rhs).toNumber()
   } catch {
-    return undefined;
+    //
+  }
+
+  try {
+    const { lhs, rhs } = subP(value)
+    return new Decimal(lhs).sub(rhs).toNumber()
+  } catch {
+    //
+  }
+
+  try {
+    const { lhs, rhs } = mulP(value)
+    return new Decimal(lhs).mul(rhs).toNumber()
+  } catch {
+    //
+  }
+
+  try {
+    const { lhs, rhs } = divP(value)
+    return parseFloat(new Decimal(lhs).div(rhs).toFixed(2))
+  } catch {
+    //
   }
 }
 
@@ -59,7 +86,13 @@ export default function (props?: Props) {
     name: string;
   }>({
     initialValues: {
-      amount: initial?.amount?.toString() ?? debit?.minus(credit ?? 0).abs().toString() ?? undefined,
+      amount:
+        initial?.amount?.toString() ??
+        debit
+          ?.minus(credit ?? 0)
+          .abs()
+          .toString() ??
+        undefined,
       account_id: initial?.account?.id ?? "",
       type: (
         initial?.type ??
@@ -75,7 +108,7 @@ export default function (props?: Props) {
     onSubmit(form) {
       onSubmit?.({
         amount: parseFloat(form.amount),
-        account: accounts!.find(account => account.id === form.account_id)!,
+        account: accounts!.find((account) => account.id === form.account_id)!,
         type: parseInt(form.type),
         time: form.time,
         name: form.name,
@@ -125,8 +158,16 @@ export default function (props?: Props) {
         <Form.Dropdown.Item title="Debit" value={Transaction.TransactionType.Debit.toString()} />
         <Form.Dropdown.Item title="Credit" value={Transaction.TransactionType.Credit.toString()} />
       </Form.Dropdown>
-      <Form.DatePicker title="Time" {...itemProps.time} info="When transaction time is missing, billing's time it belonged will be used" />
-      <Form.TextField title="Name" {...itemProps.name} info="When transaction name is missing, billing's name it belonged will be used" />
+      <Form.DatePicker
+        title="Time"
+        {...itemProps.time}
+        info="When transaction time is missing, billing's time it belonged will be used"
+      />
+      <Form.TextField
+        title="Name"
+        {...itemProps.name}
+        info="When transaction name is missing, billing's name it belonged will be used"
+      />
     </Form>
   );
 }

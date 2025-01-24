@@ -48,7 +48,6 @@
     "cross-fetch": "^4.1.0",
     "date-fns": "^4.1.0",
     "decimal.js": "^10.4.3",
-    "math-expression-evaluator": "^2.0.6",
     "swr": "^2.3.0"
   },
   "devDependencies": {

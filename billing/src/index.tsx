@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { isSome } from "./shared/utils";
 import { formatDate } from "date-fns";
 import { CreateCriticism, CreateTransaction, DeleteCriticism, EditBilling, EditCriticism, CreateBilling, DeleteBilling, DeleteTransaction } from "./actions";
+import EditTransaction from "./actions/edit-transaction";
 
 function BillingEntrypoint() {
   const [searchText, setSearchText] = useState("");
@@ -104,6 +105,12 @@ function BillingEntrypoint() {
                             />
                           </ActionPanel.Section>
                           <ActionPanel.Section title="Transactions">
+                            <EditTransaction
+                              transaction={transaction}
+                              transactions={transactions}
+                              billing={billing}
+                              mutate={mutateTransactionList}
+                            />
                             <CreateTransaction
                               billing={billing}
                               mutate={mutateTransactionList}
