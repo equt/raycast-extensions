@@ -3,7 +3,16 @@ import { Billing, Transaction, Criticism } from "@components";
 import { useMemo, useState } from "react";
 import { isSome } from "./shared/utils";
 import { formatDate } from "date-fns";
-import { CreateCriticism, CreateTransaction, DeleteCriticism, EditBilling, EditCriticism, CreateBilling, DeleteBilling, DeleteTransaction } from "./actions";
+import {
+  CreateCriticism,
+  CreateTransaction,
+  DeleteCriticism,
+  EditBilling,
+  EditCriticism,
+  CreateBilling,
+  DeleteBilling,
+  DeleteTransaction,
+} from "./actions";
 import EditTransaction from "./actions/edit-transaction";
 
 function BillingEntrypoint() {
@@ -116,10 +125,7 @@ function BillingEntrypoint() {
                               mutate={mutateTransactionList}
                               transactions={transactions}
                             />
-                            <DeleteTransaction
-                              transaction={transaction}
-                              mutate={mutateTransactionList}
-                            />
+                            <DeleteTransaction transaction={transaction} mutate={mutateTransactionList} />
                           </ActionPanel.Section>
                         </ActionPanel>
                       ),

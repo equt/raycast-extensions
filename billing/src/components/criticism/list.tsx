@@ -28,33 +28,33 @@ export default function (props: Props) {
   });
 
   return (
-      <List throttle pagination={pagination} isLoading={isLoading} {...listProps?.(mutate)}>
-        {criticisms?.map((criticism) => {
-          const props = itemProps?.(criticism, mutate, criticisms) ?? {};
-          return (
-            <List.Item
-              key={criticism.id}
-              title={criticism.text}
-              icon={{
-                source: {
-                  [Criticism.Attitude.Positive]: Icon.ThumbsUp,
-                  [Criticism.Attitude.Negative]: Icon.ThumbsDown,
-                }[criticism.attitude],
-                tintColor: {
-                  [Criticism.Attitude.Positive]: Color.Green,
-                  [Criticism.Attitude.Negative]: Color.Red,
-                }[criticism.attitude],
-              }}
-              {...props}
-              accessories={[
-                ...(props.accessories ?? []),
-                {
-                  date: new Date(criticism.time),
-                },
-              ]}
-            />
-          );
-        })}
-      </List>
+    <List throttle pagination={pagination} isLoading={isLoading} {...listProps?.(mutate)}>
+      {criticisms?.map((criticism) => {
+        const props = itemProps?.(criticism, mutate, criticisms) ?? {};
+        return (
+          <List.Item
+            key={criticism.id}
+            title={criticism.text}
+            icon={{
+              source: {
+                [Criticism.Attitude.Positive]: Icon.ThumbsUp,
+                [Criticism.Attitude.Negative]: Icon.ThumbsDown,
+              }[criticism.attitude],
+              tintColor: {
+                [Criticism.Attitude.Positive]: Color.Green,
+                [Criticism.Attitude.Negative]: Color.Red,
+              }[criticism.attitude],
+            }}
+            {...props}
+            accessories={[
+              ...(props.accessories ?? []),
+              {
+                date: new Date(criticism.time),
+              },
+            ]}
+          />
+        );
+      })}
+    </List>
   );
 }

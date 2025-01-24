@@ -8,36 +8,36 @@ import { useMemo } from "react";
 import Decimal from "decimal.js";
 import { pattern } from "@equt/pattern";
 
-const addP = pattern`${['lhs', /\d+(\.\d+)?/, { parse: parseFloat }]}\s*\+\s*${['rhs', /\d+(\.\d+)?/, { parse: parseFloat }]}`
-const subP = pattern`${['lhs', /\d+(\.\d+)?/, { parse: parseFloat }]}\s*-\s*${['rhs', /\d+(\.\d+)?/, { parse: parseFloat }]}`
-const mulP = pattern`${['lhs', /\d+(\.\d+)?/, { parse: parseFloat }]}\s*\*\s*${['rhs', /\d+(\.\d+)?/, { parse: parseFloat }]}`
-const divP = pattern`${['lhs', /\d+(\.\d+)?/, { parse: parseFloat }]}\s*\/\s*${['rhs', /\d+(\.\d+)?/, { parse: parseFloat }]}`
+const addP = pattern`${["lhs", /\d+(\.\d+)?/, { parse: parseFloat }]}\s*\+\s*${["rhs", /\d+(\.\d+)?/, { parse: parseFloat }]}`;
+const subP = pattern`${["lhs", /\d+(\.\d+)?/, { parse: parseFloat }]}\s*-\s*${["rhs", /\d+(\.\d+)?/, { parse: parseFloat }]}`;
+const mulP = pattern`${["lhs", /\d+(\.\d+)?/, { parse: parseFloat }]}\s*\*\s*${["rhs", /\d+(\.\d+)?/, { parse: parseFloat }]}`;
+const divP = pattern`${["lhs", /\d+(\.\d+)?/, { parse: parseFloat }]}\s*\/\s*${["rhs", /\d+(\.\d+)?/, { parse: parseFloat }]}`;
 
 function tryEvaluate(value: string): Nullable<number> {
   try {
-    const { lhs, rhs } = addP(value)
-    return new Decimal(lhs).add(rhs).toNumber()
+    const { lhs, rhs } = addP(value);
+    return new Decimal(lhs).add(rhs).toNumber();
   } catch {
     //
   }
 
   try {
-    const { lhs, rhs } = subP(value)
-    return new Decimal(lhs).sub(rhs).toNumber()
+    const { lhs, rhs } = subP(value);
+    return new Decimal(lhs).sub(rhs).toNumber();
   } catch {
     //
   }
 
   try {
-    const { lhs, rhs } = mulP(value)
-    return new Decimal(lhs).mul(rhs).toNumber()
+    const { lhs, rhs } = mulP(value);
+    return new Decimal(lhs).mul(rhs).toNumber();
   } catch {
     //
   }
 
   try {
-    const { lhs, rhs } = divP(value)
-    return parseFloat(new Decimal(lhs).div(rhs).toFixed(2))
+    const { lhs, rhs } = divP(value);
+    return parseFloat(new Decimal(lhs).div(rhs).toFixed(2));
   } catch {
     //
   }

@@ -63,7 +63,7 @@ export function update<T>(
   data: Array<API<Array<T>>> | undefined,
   where: (item: Readonly<T>) => boolean,
   updater: (item: Readonly<T>) => T | Array<T>,
-  defaultValue?: T
+  defaultValue?: T,
 ): Array<API<Array<T>>> {
   let inserted = false;
 
@@ -87,10 +87,10 @@ export function update<T>(
   });
 
   if (!inserted && isSome(defaultValue)) {
-    updated.push({ succeeded: true, data: [defaultValue] })
+    updated.push({ succeeded: true, data: [defaultValue] });
   }
 
-  return updated
+  return updated;
 }
 
 export async function api<T>(endpoint: string, init?: Parameters<typeof fetch>[1]): Promise<T> {
@@ -100,7 +100,7 @@ export async function api<T>(endpoint: string, init?: Parameters<typeof fetch>[1
       Authorization: `Bearer ${getPreferenceValues<PreferenceValues>().TOKEN}`,
       ...init?.headers,
     },
-  }).then(r => r.json());
+  }).then((r) => r.json());
 
   if (!resp.succeeded) {
     throw new Error(resp.message);
@@ -146,7 +146,7 @@ export function useAPI<T>(endpoint: string, options?: Options) {
           });
         },
       ],
-    }
+    },
   );
 
   return {

@@ -1,5 +1,5 @@
-export { default as List } from './list'
-export { default as Form } from './form'
+export { default as List } from "./list";
+export { default as Form } from "./form";
 
 export enum AccountType {
   Assets,
@@ -39,5 +39,5 @@ export type Type = Readonly<{
   criticism: Readonly<{
     positive: number;
     negative: number;
-  }>
+  }>;
 }>;

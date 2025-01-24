@@ -1,4 +1,4 @@
-import { Action, ActionPanel, Form} from "@raycast/api";
+import { Action, ActionPanel, Form } from "@raycast/api";
 import { Billing } from "@components";
 import { isSome } from "@shared/utils";
 import { FormValidation, useForm } from "@raycast/utils";
