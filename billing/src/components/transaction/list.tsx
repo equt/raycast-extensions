@@ -42,7 +42,7 @@ export default function (props?: Props) {
       {Object.values(group(data ?? [], { account, date }[by])).map((transactions, i) => (
         <List.Section key={i} title={{ date: renderDate, account: renderAccount }[by](transactions[0])}>
           {transactions.map((transaction) => {
-            const props = itemProps?.(transaction, mutate, transactions) ?? {};
+            const props = itemProps?.(transaction, mutate, data ?? []) ?? {};
 
             return (
               <List.Item
