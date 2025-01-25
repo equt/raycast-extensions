@@ -1,6 +1,5 @@
 import { Action, ActionPanel, Icon, LaunchProps } from "@raycast/api";
 import { Billing, Transaction, Criticism } from "@components";
-import { useMemo, useState } from "react";
 import { isSome } from "./shared/utils";
 import { formatDate } from "date-fns";
 import {
@@ -16,18 +15,11 @@ import {
 import EditTransaction from "./actions/edit-transaction";
 
 function BillingEntrypoint() {
-  const [searchText, setSearchText] = useState("");
-
   return (
     <Billing.List
-      params={{
-        name: useMemo(() => (searchText.length > 0 ? searchText : undefined), [searchText]),
-      }}
       listProps={(mutate) => ({
         navigationTitle: "Manage Billings",
         searchBarPlaceholder: `Search Billings`,
-        searchText,
-        onSearchTextChange: setSearchText,
         actions: (
           <ActionPanel>
             <CreateBilling mutate={mutate} />
