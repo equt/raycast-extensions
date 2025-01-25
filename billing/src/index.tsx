@@ -230,7 +230,11 @@ function TransactionEntrypoint() {
               />
             </ActionPanel.Section>
             <ActionPanel.Section title="Filters">
-              <CreateFilter filters={filters ?? []} setFilters={setFilters} setCurrentFilterName={setCurrentFilterName} />
+              <CreateFilter
+                filters={filters ?? []}
+                setFilters={setFilters}
+                setCurrentFilterName={setCurrentFilterName}
+              />
               <Action
                 title="Delete"
                 icon={Icon.Trash}

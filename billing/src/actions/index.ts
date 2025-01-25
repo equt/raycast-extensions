@@ -7,4 +7,4 @@ export { default as CreateBilling } from "./create-billing";
 export { default as DeleteBilling } from "./delete-billing";
 export { default as DeleteTransaction } from "./delete-transaction";
 export { default as EditTransaction } from "./edit-transaction";
-export { default as CreateFilter } from './create-filter'
+export { default as CreateFilter } from "./create-filter";

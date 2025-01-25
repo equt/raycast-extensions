@@ -10,7 +10,7 @@ type Props = {
 export default function (props: Props) {
   const { filters, setFilters, setCurrentFilterName } = props;
 
-  const { pop } = useNavigation()
+  const { pop } = useNavigation();
 
   return (
     <Action.Push
@@ -21,7 +21,7 @@ export default function (props: Props) {
         <Transaction.Filter
           filters={filters}
           onSubmit={({ name, icon, aggregation, ...params }) => {
-            pop()
+            pop();
 
             setFilters([
               ...filters,
@@ -36,7 +36,7 @@ export default function (props: Props) {
                 },
               },
             ]);
-            setCurrentFilterName(name)
+            setCurrentFilterName(name);
           }}
         />
       }

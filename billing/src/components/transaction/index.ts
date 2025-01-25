@@ -4,17 +4,16 @@ import { Icon } from "@raycast/api";
 
 export { default as List } from "./list";
 export { default as Form } from "./form";
-export { default as Filter } from './filter';
+export { default as Filter } from "./filter";
 
 export enum AggregationType {
-  Sum = 'sum',
-  UnitPrice = 'unit-price',
+  Sum = "sum",
+  UnitPrice = "unit-price",
 }
 
 export type Aggregation = Readonly<{
   type: Transaction.AggregationType;
 }>;
-
 
 export enum AccountType {
   Assets,
@@ -41,7 +40,7 @@ export type Filter = Readonly<{
   name: string;
   params: SearchParams;
   aggregation: Transaction.Aggregation;
-}>
+}>;
 
 export type Account = Readonly<{
   id: string;

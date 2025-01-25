@@ -60,8 +60,8 @@ export default function (props?: Props) {
     validation: {
       icon: FormValidation.Required,
       name(value) {
-        if (isNone(value)) return 'The item is required'
-        if (filters?.some(({ name }) => name === value)) return 'The item already exists'
+        if (isNone(value)) return "The item is required";
+        if (filters?.some(({ name }) => name === value)) return "The item already exists";
       },
     },
   });
