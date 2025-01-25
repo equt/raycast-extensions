@@ -1,13 +1,16 @@
 import { Transaction } from "@components";
-import { Action, Icon, Keyboard } from "@raycast/api";
+import { Action, Icon, Keyboard, useNavigation } from "@raycast/api";
 
 type Props = {
   filters: ReadonlyArray<Transaction.Filter>;
   setFilters: (filters: Array<Transaction.Filter>) => void;
+  setCurrentFilterName: (name: string) => void;
 };
 
 export default function (props: Props) {
-  const { filters, setFilters } = props;
+  const { filters, setFilters, setCurrentFilterName } = props;
+
+  const { pop } = useNavigation()
 
   return (
     <Action.Push
@@ -18,6 +21,8 @@ export default function (props: Props) {
         <Transaction.Filter
           filters={filters}
           onSubmit={({ name, icon, aggregation, ...params }) => {
+            pop()
+
             setFilters([
               ...filters,
               {
@@ -31,6 +36,7 @@ export default function (props: Props) {
                 },
               },
             ]);
+            setCurrentFilterName(name)
           }}
         />
       }

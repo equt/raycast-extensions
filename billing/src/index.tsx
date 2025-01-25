@@ -1,4 +1,4 @@
-import { Action, ActionPanel, Icon, LaunchProps, List } from "@raycast/api";
+import { Action, ActionPanel, Icon, Keyboard, LaunchProps, List } from "@raycast/api";
 import { Billing, Transaction, Criticism } from "@components";
 import { isSome } from "./shared/utils";
 import { formatDate } from "date-fns";
@@ -14,7 +14,8 @@ import {
   CreateFilter,
 } from "./actions";
 import EditTransaction from "./actions/edit-transaction";
-import { useLocalStorage } from "@raycast/utils";
+import { useCachedState, useLocalStorage } from "@raycast/utils";
+import { useMemo } from "react";
 
 function BillingEntrypoint() {
   return (
@@ -152,13 +153,20 @@ function TransactionEntrypoint() {
     },
   ]);
 
+  const [currentFilterName, setCurrentFilterName] = useCachedState<string>("TRANSACTION_CURRENT_FILTER", "All");
+
+  const currentFilter = useMemo(
+    () => filters?.find(({ name }) => name === currentFilterName),
+    [currentFilterName, filters],
+  );
+
   return (
     <Transaction.List
       listProps={() => ({
         navigationTitle: "Manage Transactions",
         searchBarPlaceholder: `Search Transactions`,
         searchBarAccessory: (
-          <List.Dropdown tooltip="Search Filters">
+          <List.Dropdown value={currentFilterName} tooltip="Search Filters" onChange={setCurrentFilterName}>
             {filters?.map((filter, i) => (
               <List.Dropdown.Item key={i} title={filter.name} icon={filter.icon} value={filter.name} />
             ))}
@@ -166,7 +174,7 @@ function TransactionEntrypoint() {
         ),
         actions: (
           <ActionPanel>
-            <CreateFilter filters={filters ?? []} setFilters={setFilters} />
+            <CreateFilter filters={filters ?? []} setFilters={setFilters} setCurrentFilterName={setCurrentFilterName} />
           </ActionPanel>
         ),
       })}
@@ -222,12 +230,20 @@ function TransactionEntrypoint() {
               />
             </ActionPanel.Section>
             <ActionPanel.Section title="Filters">
-              <CreateFilter filters={filters ?? []} setFilters={setFilters} />
+              <CreateFilter filters={filters ?? []} setFilters={setFilters} setCurrentFilterName={setCurrentFilterName} />
+              <Action
+                title="Delete"
+                icon={Icon.Trash}
+                shortcut={Keyboard.Shortcut.Common.Remove}
+                onAction={() => {
+                  setFilters(filters?.filter(({ name }) => name !== currentFilterName) ?? []);
+                }}
+              />
             </ActionPanel.Section>
           </ActionPanel>
         ),
       })}
-      params={{}}
+      params={{ ...currentFilter?.params }}
     />
   );
 }
