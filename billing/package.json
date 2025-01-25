@@ -35,6 +35,10 @@
             {
               "title": "Billing",
               "value": "billing"
+            },
+            {
+              "title": "Transaction",
+              "value": "transaction"
             }
           ]
         }

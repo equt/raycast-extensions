@@ -139,9 +139,78 @@ function BillingEntrypoint() {
   );
 }
 
+function TransactionEntrypoint() {
+  return (
+    <Transaction.List
+      by="date"
+      listProps={() => ({
+        navigationTitle: "Manage Transactions",
+        searchBarPlaceholder: `Search Transactions`,
+      })}
+      itemProps={(transaction, mutateTransactionList) => ({
+        actions: (
+          <ActionPanel>
+            <ActionPanel.Section title="Criticisms">
+              <Action.Push
+                title="View"
+                icon={Icon.Eye}
+                target={
+                  <Criticism.List
+                    listProps={(mutateCriticismList) => ({
+                      searchBarPlaceholder: `Search Criticisms for ${transaction.name ?? "New Transaction"}`,
+                      navigationTitle: `Criticisms for ${transaction.name ?? "New Transaction"}`,
+                      actions: (
+                        <ActionPanel>
+                          <CreateCriticism
+                            mutateCriticismList={mutateCriticismList}
+                            mutateTransactionList={mutateTransactionList}
+                            transaction={transaction}
+                          />
+                        </ActionPanel>
+                      ),
+                    })}
+                    itemProps={(criticism, mutateCriticismList) => ({
+                      actions: (
+                        <ActionPanel>
+                          <ActionPanel.Section title="Manage Criticisms">
+                            <CreateCriticism
+                              mutateCriticismList={mutateCriticismList}
+                              mutateTransactionList={mutateTransactionList}
+                              transaction={transaction}
+                            />
+                            <EditCriticism
+                              mutateCriticismList={mutateCriticismList}
+                              mutateTransactionList={mutateTransactionList}
+                              criticism={criticism}
+                              transaction={transaction}
+                            />
+                            <DeleteCriticism
+                              mutateCriticismList={mutateCriticismList}
+                              mutateTransactionList={mutateTransactionList}
+                              criticism={criticism}
+                            />
+                          </ActionPanel.Section>
+                        </ActionPanel>
+                      ),
+                    })}
+                    transaction={transaction}
+                  />
+                }
+              />
+            </ActionPanel.Section>
+          </ActionPanel>
+        ),
+      })}
+      params={{}}
+    />
+  );
+}
+
 export default function (props: LaunchProps<{ arguments: Arguments.Index }>) {
   switch (props.arguments.view) {
     case "billing":
       return <BillingEntrypoint />;
+    case "transaction":
+      return <TransactionEntrypoint />;
   }
 }
