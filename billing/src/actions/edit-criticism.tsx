@@ -17,9 +17,9 @@ export default function (props: Props) {
 
   return (
     <Action.Push
-      title="Create Criticism"
-      icon={Icon.Plus}
-      shortcut={Keyboard.Shortcut.Common.New}
+      title="Edit Criticism"
+      icon={Icon.Pencil}
+      shortcut={Keyboard.Shortcut.Common.Edit}
       target={
         <Criticism.Form
           initial={{ ...criticism }}

@@ -16,7 +16,7 @@ export default function (props: Props) {
 
   return (
     <Action.Push
-      title="Create Criticism"
+      title="Create"
       icon={Icon.Plus}
       shortcut={Keyboard.Shortcut.Common.New}
       target={
