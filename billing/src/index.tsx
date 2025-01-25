@@ -1,4 +1,4 @@
-import { Action, ActionPanel, Icon, LaunchProps } from "@raycast/api";
+import { Action, ActionPanel, Icon, LaunchProps, List } from "@raycast/api";
 import { Billing, Transaction, Criticism } from "@components";
 import { isSome } from "./shared/utils";
 import { formatDate } from "date-fns";
@@ -13,6 +13,7 @@ import {
   DeleteTransaction,
 } from "./actions";
 import EditTransaction from "./actions/edit-transaction";
+import { useCachedState } from "@raycast/utils";
 
 function BillingEntrypoint() {
   return (
@@ -35,6 +36,7 @@ function BillingEntrypoint() {
                 icon={Icon.Eye}
                 target={
                   <Transaction.List
+                    by={{ type: "account", namespace: billing.id }}
                     params={{
                       billing_id: billing.id,
                     }}
@@ -140,12 +142,32 @@ function BillingEntrypoint() {
 }
 
 function TransactionEntrypoint() {
+  type TransactionFilter = {
+    name: string;
+    icon: Icon;
+    params: string;
+  };
+
+  const [filters] = useCachedState<Array<TransactionFilter>>("TRANSACTION_FILTER", [
+    {
+      icon: Icon.List,
+      name: "All",
+      params: "{}",
+    },
+  ]);
+
   return (
     <Transaction.List
-      by="date"
       listProps={() => ({
         navigationTitle: "Manage Transactions",
         searchBarPlaceholder: `Search Transactions`,
+        searchBarAccessory: (
+          <List.Dropdown tooltip="Search Filters">
+            {filters.map((filter, i) => (
+              <List.Dropdown.Item key={i} title={filter.name} icon={filter.icon} value={filter.params} />
+            ))}
+          </List.Dropdown>
+        ),
       })}
       itemProps={(transaction, mutateTransactionList) => ({
         actions: (

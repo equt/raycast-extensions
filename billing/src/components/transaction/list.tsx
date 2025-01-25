@@ -3,10 +3,12 @@ import { Transaction } from "@components";
 import { API, SearchParams, FixedSWRInfiniteKeyedMutator, usePaginationAPI } from "@hooks";
 import { group, date, renderDate, hasUnitPrice, parseQuantity } from "@shared/utils";
 import Decimal from "decimal.js";
+import { useCachedState } from "@raycast/utils";
+import { useMemo } from "react";
 
 type Props = Readonly<
   Partial<{
-    by: "date" | "account";
+    by: { type: "date" } | { type: "account"; namespace: string };
     size: number;
     defaultTitle: string;
     params: SearchParams | null;
@@ -30,17 +32,34 @@ function renderAccount({ account }: Transaction.Type) {
 }
 
 export default function (props?: Props) {
-  const { by = "account", defaultTitle = "New Transaction", params, itemProps, listProps, size } = props ?? {};
+  const { by = { type: "date" }, defaultTitle = "New Transaction", params, itemProps, listProps, size } = props ?? {};
+
+  const [searchText, setSearchText] = useCachedState("TRANSACTION_SEARCH", "", {
+    cacheNamespace: by.type === "account" ? by.namespace : undefined,
+  });
 
   const { data, mutate, pagination, isLoading } = usePaginationAPI<Transaction.Type>("/transaction", {
-    params,
+    params: useMemo(
+      () => ({
+        ...params,
+        name: searchText.length > 0 ? searchText : undefined,
+      }),
+      [params, searchText],
+    ),
     size,
   });
 
   return (
-    <List throttle pagination={pagination} isLoading={isLoading} {...listProps?.(mutate)}>
-      {Object.values(group(data ?? [], { account, date }[by])).map((transactions, i) => (
-        <List.Section key={i} title={{ date: renderDate, account: renderAccount }[by](transactions[0])}>
+    <List
+      throttle
+      searchText={searchText}
+      pagination={pagination}
+      isLoading={isLoading}
+      onSearchTextChange={setSearchText}
+      {...listProps?.(mutate)}
+    >
+      {Object.values(group(data ?? [], { account, date }[by.type])).map((transactions, i) => (
+        <List.Section key={i} title={{ date: renderDate, account: renderAccount }[by.type](transactions[0])}>
           {transactions.map((transaction) => {
             const props = itemProps?.(transaction, mutate, data ?? []) ?? {};
 
