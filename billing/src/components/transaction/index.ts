@@ -1,5 +1,20 @@
+import { Transaction } from "@components";
+import { SearchParams } from "@hooks";
+import { Icon } from "@raycast/api";
+
 export { default as List } from "./list";
 export { default as Form } from "./form";
+export { default as Filter } from './filter';
+
+export enum AggregationType {
+  Sum = 'sum',
+  UnitPrice = 'unit-price',
+}
+
+export type Aggregation = Readonly<{
+  type: Transaction.AggregationType;
+}>;
+
 
 export enum AccountType {
   Assets,
@@ -20,6 +35,13 @@ export enum Currency {
   EUR = "EUR",
   JPY = "JPY",
 }
+
+export type Filter = Readonly<{
+  icon: Icon;
+  name: string;
+  params: SearchParams;
+  aggregation: Transaction.Aggregation;
+}>
 
 export type Account = Readonly<{
   id: string;

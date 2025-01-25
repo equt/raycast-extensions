@@ -11,9 +11,10 @@ import {
   CreateBilling,
   DeleteBilling,
   DeleteTransaction,
+  CreateFilter,
 } from "./actions";
 import EditTransaction from "./actions/edit-transaction";
-import { useCachedState } from "@raycast/utils";
+import { useLocalStorage } from "@raycast/utils";
 
 function BillingEntrypoint() {
   return (
@@ -142,17 +143,12 @@ function BillingEntrypoint() {
 }
 
 function TransactionEntrypoint() {
-  type TransactionFilter = {
-    name: string;
-    icon: Icon;
-    params: string;
-  };
-
-  const [filters] = useCachedState<Array<TransactionFilter>>("TRANSACTION_FILTER", [
+  const { value: filters, setValue: setFilters } = useLocalStorage<Array<Transaction.Filter>>("TRANSACTION_FILTERS", [
     {
       icon: Icon.List,
       name: "All",
-      params: "{}",
+      aggregation: { type: Transaction.AggregationType.Sum },
+      params: {},
     },
   ]);
 
@@ -163,10 +159,15 @@ function TransactionEntrypoint() {
         searchBarPlaceholder: `Search Transactions`,
         searchBarAccessory: (
           <List.Dropdown tooltip="Search Filters">
-            {filters.map((filter, i) => (
-              <List.Dropdown.Item key={i} title={filter.name} icon={filter.icon} value={filter.params} />
+            {filters?.map((filter, i) => (
+              <List.Dropdown.Item key={i} title={filter.name} icon={filter.icon} value={filter.name} />
             ))}
           </List.Dropdown>
+        ),
+        actions: (
+          <ActionPanel>
+            <CreateFilter filters={filters ?? []} setFilters={setFilters} />
+          </ActionPanel>
         ),
       })}
       itemProps={(transaction, mutateTransactionList) => ({
@@ -219,6 +220,9 @@ function TransactionEntrypoint() {
                   />
                 }
               />
+            </ActionPanel.Section>
+            <ActionPanel.Section title="Filters">
+              <CreateFilter filters={filters ?? []} setFilters={setFilters} />
             </ActionPanel.Section>
           </ActionPanel>
         ),
