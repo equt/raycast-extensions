@@ -249,7 +249,7 @@ function TransactionEntrypoint() {
                         primaryAction: {
                           style: Alert.ActionStyle.Destructive,
                           title: "Delete",
-                        }
+                        },
                       })
                     ) {
                       setFilters(filters?.filter(({ name }) => name !== currentFilterName) ?? []);
