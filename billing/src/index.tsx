@@ -1,4 +1,4 @@
-import { Action, ActionPanel, Icon, Keyboard, LaunchProps, List } from "@raycast/api";
+import { Action, ActionPanel, confirmAlert, Icon, Keyboard, LaunchProps, List } from "@raycast/api";
 import { Billing, Transaction, Criticism } from "@components";
 import { isSome } from "./shared/utils";
 import { formatDate } from "date-fns";
@@ -235,14 +235,22 @@ function TransactionEntrypoint() {
                 setFilters={setFilters}
                 setCurrentFilterName={setCurrentFilterName}
               />
-              <Action
-                title="Delete"
-                icon={Icon.Trash}
-                shortcut={Keyboard.Shortcut.Common.Remove}
-                onAction={() => {
-                  setFilters(filters?.filter(({ name }) => name !== currentFilterName) ?? []);
-                }}
-              />
+              {currentFilterName !== "All" && (
+                <Action
+                  title="Delete"
+                  icon={Icon.Trash}
+                  shortcut={Keyboard.Shortcut.Common.Remove}
+                  onAction={async () => {
+                    if (
+                      await confirmAlert({
+                        title: `Delete ${currentFilterName}?`,
+                      })
+                    ) {
+                      setFilters(filters?.filter(({ name }) => name !== currentFilterName) ?? []);
+                    }
+                  }}
+                />
+              )}
             </ActionPanel.Section>
           </ActionPanel>
         ),
