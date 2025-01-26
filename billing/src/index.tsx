@@ -1,4 +1,4 @@
-import { Action, ActionPanel, confirmAlert, Icon, Keyboard, LaunchProps, List } from "@raycast/api";
+import { Action, ActionPanel, Alert, confirmAlert, Icon, Keyboard, LaunchProps, List } from "@raycast/api";
 import { Billing, Transaction, Criticism } from "@components";
 import { isSome } from "./shared/utils";
 import { formatDate } from "date-fns";
@@ -243,7 +243,13 @@ function TransactionEntrypoint() {
                   onAction={async () => {
                     if (
                       await confirmAlert({
-                        title: `Delete ${currentFilterName}?`,
+                        title: `Delete Filter`,
+                        message: `Are you sure you want to delete the filter "${currentFilterName}"?`,
+                        icon: Icon.Warning,
+                        primaryAction: {
+                          style: Alert.ActionStyle.Destructive,
+                          title: "Delete",
+                        }
                       })
                     ) {
                       setFilters(filters?.filter(({ name }) => name !== currentFilterName) ?? []);
